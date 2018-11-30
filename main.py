@@ -10,6 +10,8 @@ from cropper import crop_face
 parser = argparse.ArgumentParser()
 parser.add_argument('--csv_dir', default='./data_csv')
 parser.add_argument('--result_dir', default='./result')
+parser.add_argument('--start', default=0)
+parser.add_argument('--end', default=1)
 parser.add_argument('--sr', default=16000)
 parser.add_argument('--fourcc', default='avc1')
 parser.add_argument('--crop_size', default=224)
@@ -50,6 +52,12 @@ for c in all_csv:
             all_end.append(float(col[2]))
             all_x.append(float(col[3]))
             all_y.append(float(col[4]))
+
+all_id = all_id[args.start:args.end]
+all_start = all_start[args.start:args.end]
+all_end = all_end[args.start:args.end]
+all_x = all_x[args.start:args.end]
+all_y = all_y[args.start:args.end]
 
 for i in range(len(all_id)):
     id, start, end, x, y = all_id[i], all_start[i], all_end[i], all_x[i], all_y[i]
