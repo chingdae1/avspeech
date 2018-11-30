@@ -31,6 +31,7 @@ def get_ydl_opts_aud(path):
 
 
 def download(video_id, video_result_path, audio_result_path):
+    print('donwloader..')
     with youtube_dl.YoutubeDL(get_ydl_opts_vid(video_result_path)) as ydl:
         ydl.download(['https://www.youtube.com/watch?v=' + video_id])
 

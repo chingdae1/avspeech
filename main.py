@@ -77,7 +77,9 @@ for i in range(len(all_id)):
         cut(video_path + '.mp4', audio_path + '.wav', start, end, args.sr, audio_np_path)
 
         # Crop target face and save cropped as numpy
+        print('before fourcc')
         fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
+        print('after fourcc')
         vc = cv2.VideoCapture(video_path + '.mp4')
         vid_writer = cv2.VideoWriter(cropped_path,
                                      fourcc,
