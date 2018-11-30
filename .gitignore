@@ -1,0 +1,8 @@
+.DS_Store
+result/
+.idea/
+.ipynb_checkpoints/
+__pycache__/
+data_csv/
+avspeech_test.csv
+avspeech_train.csv
