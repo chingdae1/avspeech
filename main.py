@@ -1,10 +1,11 @@
 import os
 import csv
+import cv2
 import glob
 import argparse
+import subprocess
 from downloader import download
 from cutter import cut
-import cv2
 from cropper import crop_face
 
 parser = argparse.ArgumentParser()
@@ -13,10 +14,10 @@ parser.add_argument('--result_dir', default='./result')
 parser.add_argument('--start', default=0, type=int)
 parser.add_argument('--end', default=1, type=int)
 parser.add_argument('--sr', default=16000)
-parser.add_argument('--fourcc', default='avc1')
+parser.add_argument('--fourcc', default='avc1')  # In ubuntu, use mp4v for mp4.
 parser.add_argument('--crop_ext', default='mp4')
 parser.add_argument('--crop_size', default=224)
-parser.add_argument('--fps', default=25.0)
+parser.add_argument('--fps', default=25.0, type=float)
 args = parser.parse_args()
 
 all_csv = sorted(glob.glob(os.path.join(args.csv_dir, '*.csv')))
@@ -80,6 +81,20 @@ for i in range(len(all_id)):
         # Crop target face and save cropped as numpy
         fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
         vc = cv2.VideoCapture(video_path + '.mp4')
+
+        # If FPS is not 25, resample video.
+        if vc.get(cv2.CAP_PROP_FPS) != args.fps:
+            print('Resample video..')
+            fps_int = int(args.fps)
+            resample_command = 'ffmpeg -y -i ' + video_path + '.mp4' + \
+                               ' -r ' + str(fps_int) + \
+                               ' -c:v libx264 -b:v 3M -strict -2 -movflags faststart '\
+                               + video_path + '_resampled.mp4'
+            subprocess.call(resample_command, shell=True)
+            os.remove(video_path + '.mp4')
+            os.rename(video_path + '_resampled.mp4', video_path + '.mp4')
+            vc = cv2.VideoCapture(video_path + '.mp4')
+
         vid_writer = cv2.VideoWriter(cropped_path,
                                      fourcc,
                                      args.fps,
@@ -90,6 +105,7 @@ for i in range(len(all_id)):
             done_cnt += 1
         else:
             print('Skipped:', cropped_path)
+            print('REMOVE ALL RELAVANT FILE to', id)
             skipped_cnt += 1
             all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '*'))
             for f in all_relavant:
