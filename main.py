@@ -65,7 +65,7 @@ for i in range(len(all_id)):
     print('================== Progress: [{}/{}],  ID:{} =================='.format(i+1, len(all_id), id))
     audio_path = os.path.join(audio_dir, id)
     video_path = os.path.join(video_dir, id)
-    cropped_path = os.path.join(cropped_dir, id + args.crop_ext)
+    cropped_path = os.path.join(cropped_dir, id + '.' + args.crop_ext)
     audio_np_path = os.path.join(audio_np_dir, id + '.npy')
     cropped_np_path = os.path.join(cropped_np_dir, id + '.npy')
 
