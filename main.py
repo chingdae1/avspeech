@@ -14,6 +14,7 @@ parser.add_argument('--start', default=0, type=int)
 parser.add_argument('--end', default=1, type=int)
 parser.add_argument('--sr', default=16000)
 parser.add_argument('--fourcc', default='avc1')
+parser.add_argument('--crop_ext', default='mp4')
 parser.add_argument('--crop_size', default=224)
 parser.add_argument('--fps', default=25.0)
 args = parser.parse_args()
@@ -64,7 +65,7 @@ for i in range(len(all_id)):
     print('================== Progress: [{}/{}],  ID:{} =================='.format(i+1, len(all_id), id))
     audio_path = os.path.join(audio_dir, id)
     video_path = os.path.join(video_dir, id)
-    cropped_path = os.path.join(cropped_dir, id + '.mp4')
+    cropped_path = os.path.join(cropped_dir, id + args.crop_ext)
     audio_np_path = os.path.join(audio_np_dir, id + '.npy')
     cropped_np_path = os.path.join(cropped_np_dir, id + '.npy')
 
@@ -77,9 +78,7 @@ for i in range(len(all_id)):
         cut(video_path + '.mp4', audio_path + '.wav', start, end, args.sr, audio_np_path)
 
         # Crop target face and save cropped as numpy
-        print('before fourcc')
         fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
-        print('after fourcc')
         vc = cv2.VideoCapture(video_path + '.mp4')
         vid_writer = cv2.VideoWriter(cropped_path,
                                      fourcc,
