@@ -5,7 +5,6 @@ import librosa
 
 
 def cut(video_path, audio_path, start_t, end_t, sr, np_path):
-    print('cutter')
     # Cut video
     myclip = mpy.VideoFileClip(video_path)
     subclip = myclip.subclip(start_t, end_t)
