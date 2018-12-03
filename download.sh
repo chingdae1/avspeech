@@ -1,3 +1,4 @@
+#!/bin/bash
 nohup python3 main.py --csv_dir ./csv --result_dir ./result_train --fourcc mp4v --start 0 --end 3000 > log_1 &;
 nohup python3 main.py --csv_dir ./csv --result_dir ./result_train --fourcc mp4v --start 3000 --end 6000 > log_2 &;
 nohup python3 main.py --csv_dir ./csv --result_dir ./result_train --fourcc mp4v --start 6000 --end 9000 > log_3 &;
