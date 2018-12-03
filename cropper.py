@@ -14,11 +14,9 @@ def get_center(shape):
     return center_x, center_y
 
 
-def crop_face(vc, norm_x, norm_y, vid_writer, np_path, crop_size=224):
+def crop_face(vc, norm_x, norm_y, vid_writer, crop_size=224):
     print('Crop face..')
     idx = 0
-    length = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
-    cropped_np = np.zeros((length, crop_size, crop_size, 3), dtype=np.uint8)
     scale_factor = None
     prev_center_x = None
     prev_center_y = None
@@ -123,8 +121,6 @@ def crop_face(vc, norm_x, norm_y, vid_writer, np_path, crop_size=224):
         img_face = cv2.cvtColor(img_face, cv2.COLOR_RGB2BGR)
         img_face = cv2.resize(img_face, (224, 224))
         vid_writer.write(img_face)
-        cropped_np[idx] = img_face
         idx += 1
     print('Cropping is done.')
-    np.save(np_path, cropped_np)
     return True

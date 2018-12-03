@@ -25,13 +25,11 @@ all_csv = sorted(glob.glob(os.path.join(args.csv_dir, '*.csv')))
 video_dir = os.path.join(args.result_dir, 'original', 'video')
 audio_dir = os.path.join(args.result_dir, 'original', 'audio')
 cropped_dir = os.path.join(args.result_dir, 'original', 'cropped')
-cropped_np_dir = os.path.join(args.result_dir, 'numpy', 'cropped')
 audio_np_dir = os.path.join(args.result_dir, 'numpy', 'audio')
 os.makedirs(args.result_dir, exist_ok=True)
 os.makedirs(video_dir, exist_ok=True)
 os.makedirs(audio_dir, exist_ok=True)
 os.makedirs(cropped_dir, exist_ok=True)
-os.makedirs(cropped_np_dir, exist_ok=True)
 os.makedirs(audio_np_dir, exist_ok=True)
 
 all_id = []
@@ -68,7 +66,6 @@ for i in range(len(all_id)):
     video_path = os.path.join(video_dir, id)
     cropped_path = os.path.join(cropped_dir, id + '.' + args.crop_ext)
     audio_np_path = os.path.join(audio_np_dir, id + '.npy')
-    cropped_np_path = os.path.join(cropped_np_dir, id + '.npy')
 
     try:
         # Download full video and audio
@@ -78,7 +75,6 @@ for i in range(len(all_id)):
         # Also, save audio as numpy
         cut(video_path + '.mp4', audio_path + '.wav', start, end, args.sr, audio_np_path)
 
-        # Crop target face and save cropped as numpy
         fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
         vc = cv2.VideoCapture(video_path + '.mp4')
 
@@ -99,7 +95,8 @@ for i in range(len(all_id)):
                                      fourcc,
                                      args.fps,
                                      (args.crop_size, args.crop_size))
-        is_cropped = crop_face(vc, x, y, vid_writer, cropped_np_path)
+        # Crop target face
+        is_cropped = crop_face(vc, x, y, vid_writer)
 
         if is_cropped:
             done_cnt += 1
