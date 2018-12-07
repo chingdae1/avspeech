@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--csv_dir', default='./data_csv')
 parser.add_argument('--result_dir', default='./result')
 parser.add_argument('--start', default=0, type=int)
-parser.add_argument('--end', default=1, type=int)
+parser.add_argument('--end', default=3, type=int)
 parser.add_argument('--sr', default=16000)
 parser.add_argument('--fourcc', default='avc1')  # In ubuntu, use mp4v for mp4.
 parser.add_argument('--crop_ext', default='mp4')
@@ -22,13 +22,18 @@ args = parser.parse_args()
 
 all_csv = sorted(glob.glob(os.path.join(args.csv_dir, '*.csv')))
 
-video_dir = os.path.join(args.result_dir, 'original', 'video')
-audio_dir = os.path.join(args.result_dir, 'original', 'audio')
+cut_video_dir = os.path.join(args.result_dir, 'original', 'video_cut')
+full_video_dir = os.path.join(args.result_dir, 'original', 'video_full')
+cut_audio_dir = os.path.join(args.result_dir, 'original', 'audio_cut')
+full_audio_dir = os.path.join(args.result_dir, 'original', 'audio_full')
 cropped_dir = os.path.join(args.result_dir, 'original', 'cropped')
 audio_np_dir = os.path.join(args.result_dir, 'numpy', 'audio')
+
 os.makedirs(args.result_dir, exist_ok=True)
-os.makedirs(video_dir, exist_ok=True)
-os.makedirs(audio_dir, exist_ok=True)
+os.makedirs(cut_video_dir, exist_ok=True)
+os.makedirs(full_video_dir, exist_ok=True)
+os.makedirs(cut_audio_dir, exist_ok=True)
+os.makedirs(full_audio_dir, exist_ok=True)
 os.makedirs(cropped_dir, exist_ok=True)
 os.makedirs(audio_np_dir, exist_ok=True)
 
@@ -62,35 +67,39 @@ all_y = all_y[args.start:args.end]
 for i in range(len(all_id)):
     id, start, end, x, y = all_id[i], all_start[i], all_end[i], all_x[i], all_y[i]
     print('================== Progress: [{}/{}],  ID:{} =================='.format(i+1, len(all_id), id))
-    audio_path = os.path.join(audio_dir, id)
-    video_path = os.path.join(video_dir, id)
-    cropped_path = os.path.join(cropped_dir, id + '.' + args.crop_ext)
-    audio_np_path = os.path.join(audio_np_dir, id + '.npy')
+    cut_audio_path = os.path.join(cut_audio_dir, id + '_' + str(int(start)) + '_' + str(int(end)))
+    full_audio_path = os.path.join(full_audio_dir, id)
+    cut_video_path = os.path.join(cut_video_dir, id + '_' + str(int(start)) + '_' + str(int(end)))
+    full_video_path = os.path.join(full_video_dir, id)
+    cropped_path = os.path.join(cropped_dir, id + '_' + str(int(start)) + '_' + str(int(end)) + '.' + args.crop_ext)
+    audio_np_path = os.path.join(audio_np_dir, id + '_' + str(int(start)) + '_' + str(int(end)) + '.npy')
 
     try:
         # Download full video and audio
-        download(id, video_path, audio_path)
+        download(id, full_video_path, full_audio_path)
 
         # Cut out target portion of video and audio
         # Also, save audio as numpy
-        cut(video_path + '.mp4', audio_path + '.wav', start, end, args.sr, audio_np_path)
+        cut(full_video_path + '.mp4', cut_video_path + '.mp4',
+            full_audio_path + '.wav', cut_audio_path + '.wav',
+            start, end, args.sr, audio_np_path)
 
-        fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
-        vc = cv2.VideoCapture(video_path + '.mp4')
+        vc = cv2.VideoCapture(cut_video_path + '.mp4')
 
         # If FPS is not 25, resample video.
         if vc.get(cv2.CAP_PROP_FPS) != args.fps:
             print('Resample video..')
             fps_int = int(args.fps)
-            resample_command = 'ffmpeg -y -i ' + video_path + '.mp4' + \
+            resample_command = 'ffmpeg -y -i ' + cut_video_path + '.mp4' + \
                                ' -r ' + str(fps_int) + \
-                               ' -c:v libx264 -b:v 3M -strict -2 -movflags faststart '\
-                               + video_path + '_resampled.mp4'
+                               ' -c:v libx264 -b:v 3M -strict -2 -movflags faststart ' \
+                               + cut_video_path + '_resampled.mp4'
             subprocess.call(resample_command, shell=True)
-            os.remove(video_path + '.mp4')
-            os.rename(video_path + '_resampled.mp4', video_path + '.mp4')
-            vc = cv2.VideoCapture(video_path + '.mp4')
+            os.remove(cut_video_path + '.mp4')
+            os.rename(cut_video_path + '_resampled.mp4', cut_video_path + '.mp4')
+            vc = cv2.VideoCapture(cut_video_path + '.mp4')
 
+        fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
         vid_writer = cv2.VideoWriter(cropped_path,
                                      fourcc,
                                      args.fps,
