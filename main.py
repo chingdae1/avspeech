@@ -111,17 +111,17 @@ for i in range(len(all_id)):
             done_cnt += 1
         else:
             print('Skipped:', cropped_path)
-            print('REMOVE ALL RELAVANT FILE to', id)
+            print('REMOVE ALL RELAVANT FILE to', id + '_' + str(int(start)) + '_' + str(int(end)))
             skipped_cnt += 1
-            all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '*'))
+            all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '_' + str(int(start)) + '_' + str(int(end)) + '*'))
             for f in all_relavant:
                 os.remove(f)
     except:
         print('[!][!][!][!][!][!][!][!][!][!][!][!][!][!][!]')
         print('FAIL. SOMTHING WRONG. ex) Fail to download.')
-        print('REMOVE ALL RELAVANT FILE to', id)
+        print('REMOVE ALL RELAVANT FILE to', id + '_' + str(int(start)) + '_' + str(int(end)))
         fail_cnt += 1
-        all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '*'))
+        all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '_' + str(int(start)) + '_' + str(int(end)) + '*'))
         for f in all_relavant:
             os.remove(f)
 
