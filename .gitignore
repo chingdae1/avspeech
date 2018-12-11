@@ -6,3 +6,4 @@ __pycache__/
 data_csv/
 avspeech_test.csv
 avspeech_train.csv
+exception
