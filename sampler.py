@@ -7,7 +7,7 @@ import sys
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='/Users/changdae/Desktop/AVS_toy')
 parser.add_argument('--out_dir', default='/Users/changdae/Desktop/AVS_test')
-parser.add_argument('--num_of_sample', default=4)
+parser.add_argument('--num_of_sample', type=int, default=4)
 args = parser.parse_args()
 
 all_cropped = sorted(glob.glob(os.path.join(args.data_dir, 'original', 'cropped', '*.mp4')))
