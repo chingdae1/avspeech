@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--csv_dir', default='./data_csv')
 parser.add_argument('--result_dir', default='./result')
 parser.add_argument('--start', default=0, type=int)
-parser.add_argument('--end', default=3, type=int)
+parser.add_argument('--end', default=10, type=int)
 parser.add_argument('--sr', default=16000)
 parser.add_argument('--fourcc', default='avc1')  # In ubuntu, use mp4v for mp4.
 parser.add_argument('--crop_ext', default='mp4')
@@ -58,12 +58,18 @@ for c in all_csv:
             all_x.append(float(col[3]))
             all_y.append(float(col[4]))
 
+print('Sorting..')
+zipped = zip(all_id, all_start, all_end, all_x, all_y)
+zipped = sorted(zipped)
+all_id, all_start, all_end, all_x, all_y = zip(*zipped)
+
 all_id = all_id[args.start:args.end]
 all_start = all_start[args.start:args.end]
 all_end = all_end[args.start:args.end]
 all_x = all_x[args.start:args.end]
 all_y = all_y[args.start:args.end]
 
+prev_id = None
 for i in range(len(all_id)):
     id, start, end, x, y = all_id[i], all_start[i], all_end[i], all_x[i], all_y[i]
     print('================== Progress: [{}/{}],  ID:{} =================='.format(i+1, len(all_id), id))
@@ -75,6 +81,11 @@ for i in range(len(all_id)):
     audio_np_path = os.path.join(audio_np_dir, id + '_' + str(int(start)) + '_' + str(int(end)) + '.npy')
 
     try:
+        if id != prev_id and prev_id is not None:
+            print('Delete full video, id:', prev_id)
+            os.remove(os.path.join(full_audio_dir, prev_id + '.wav'))
+            os.remove(os.path.join(full_video_dir, prev_id + '.mp4'))
+        prev_id = id
         # Download full video and audio
         download(id, full_video_path, full_audio_path)
 
