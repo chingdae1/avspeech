@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--csv_dir', default='./data_csv')
 parser.add_argument('--result_dir', default='./result')
 parser.add_argument('--start', default=0, type=int)
-parser.add_argument('--end', default=10, type=int)
+parser.add_argument('--end', default=3, type=int)
 parser.add_argument('--sr', default=16000)
 parser.add_argument('--fourcc', default='avc1')  # In ubuntu, use mp4v for mp4.
 parser.add_argument('--crop_ext', default='mp4')
@@ -83,8 +83,12 @@ for i in range(len(all_id)):
     try:
         if id != prev_id and prev_id is not None:
             print('Delete full video, id:', prev_id)
-            os.remove(os.path.join(full_audio_dir, prev_id + '.wav'))
-            os.remove(os.path.join(full_video_dir, prev_id + '.mp4'))
+            prev_audio_full = os.path.join(full_audio_dir, prev_id + '.wav')
+            prev_video_full = os.path.join(full_video_dir, prev_id + '.mp4')
+            if os.path.exists(prev_audio_full):
+                os.remove(prev_audio_full)
+            if os.path.exists(prev_video_full):
+                os.remove(prev_video_full)
         prev_id = id
         # Download full video and audio
         download(id, full_video_path, full_audio_path)
