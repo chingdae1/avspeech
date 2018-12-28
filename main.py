@@ -28,6 +28,7 @@ cut_audio_dir = os.path.join(args.result_dir, 'original', 'audio_cut')
 full_audio_dir = os.path.join(args.result_dir, 'original', 'audio_full')
 cropped_dir = os.path.join(args.result_dir, 'original', 'cropped')
 audio_np_dir = os.path.join(args.result_dir, 'numpy', 'audio')
+dummy_dir = os.path.join(args.result_dir, 'dummy')
 
 os.makedirs(args.result_dir, exist_ok=True)
 os.makedirs(cut_video_dir, exist_ok=True)
@@ -36,6 +37,7 @@ os.makedirs(cut_audio_dir, exist_ok=True)
 os.makedirs(full_audio_dir, exist_ok=True)
 os.makedirs(cropped_dir, exist_ok=True)
 os.makedirs(audio_np_dir, exist_ok=True)
+os.makedirs(dummy_dir, exist_ok=True)
 
 all_id = []
 all_start = []
@@ -63,11 +65,15 @@ zipped = zip(all_id, all_start, all_end, all_x, all_y)
 zipped = sorted(zipped)
 all_id, all_start, all_end, all_x, all_y = zip(*zipped)
 
-all_id = all_id[args.start:args.end]
-all_start = all_start[args.start:args.end]
-all_end = all_end[args.start:args.end]
-all_x = all_x[args.start:args.end]
-all_y = all_y[args.start:args.end]
+# Check previous download list
+all_dummy = glob.glob(os.path.join(dummy_dir, '*'))
+num_of_dummy = len(all_dummy)
+
+all_id = all_id[args.start + num_of_dummy:args.end]
+all_start = all_start[args.start + num_of_dummy:args.end]
+all_end = all_end[args.start + num_of_dummy:args.end]
+all_x = all_x[args.start + num_of_dummy:args.end]
+all_y = all_y[args.start + num_of_dummy:args.end]
 
 prev_id = None
 for i in range(len(all_id)):
@@ -140,6 +146,10 @@ for i in range(len(all_id)):
         for f in all_relavant:
             os.remove(f)
 
+    # Create dummy which means this data has been completed
+    dummy_path = os.path.join(dummy_dir, id + '_' + str(int(start)) + '_' + str(int(end)))
+    dummy = open(dummy_path, 'w')
+    dummy.close()
 
 print('Done')
 print('..')
