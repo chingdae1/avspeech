@@ -65,15 +65,15 @@ zipped = zip(all_id, all_start, all_end, all_x, all_y)
 zipped = sorted(zipped)
 all_id, all_start, all_end, all_x, all_y = zip(*zipped)
 
-# Check previous download list
-all_dummy = glob.glob(os.path.join(dummy_dir, '*'))
-num_of_dummy = len(all_dummy)
+# Check already processed number of data
+with open('processed_cnt', 'r') as f:
+    processed_cnt = int(f.readlines())
 
-all_id = all_id[args.start + num_of_dummy:args.end]
-all_start = all_start[args.start + num_of_dummy:args.end]
-all_end = all_end[args.start + num_of_dummy:args.end]
-all_x = all_x[args.start + num_of_dummy:args.end]
-all_y = all_y[args.start + num_of_dummy:args.end]
+all_id = all_id[args.start + processed_cnt:args.end]
+all_start = all_start[args.start + processed_cnt:args.end]
+all_end = all_end[args.start + processed_cnt:args.end]
+all_x = all_x[args.start + processed_cnt:args.end]
+all_y = all_y[args.start + processed_cnt:args.end]
 
 prev_id = None
 for i in range(len(all_id)):
@@ -147,9 +147,14 @@ for i in range(len(all_id)):
             os.remove(f)
 
     # Create dummy which means this data has been completed
-    dummy_path = os.path.join(dummy_dir, id + '_' + str(int(start)) + '_' + str(int(end)))
-    dummy = open(dummy_path, 'w')
-    dummy.close()
+    with open('processed_cnt', 'r') as f:
+        cnt = int(f.readlines())
+    with open('processed_cnt', 'w') as f:
+        cnt += 1
+        f.write(str(cnt))
+
+with open('processed_cnt', 'w') as f:
+    f.write('0')
 
 print('Done')
 print('..')
