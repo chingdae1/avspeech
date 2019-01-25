@@ -69,7 +69,7 @@ all_id, all_start, all_end, all_x, all_y = zip(*zipped)
 cnt_path = os.path.join(dummy_dir, 'processed_cnt.txt')
 if os.path.exists(cnt_path):
     with open(cnt_path, 'r') as f:
-        processed_cnt = int(f.readlines())
+        processed_cnt = int(f.readline())
 else:
     with open(cnt_path, 'w') as f:
         f.write('0')
@@ -154,7 +154,7 @@ for i in range(len(all_id)):
 
     # Add count
     with open(cnt_path, 'r') as f:
-        cnt = int(f.readlines())
+        cnt = int(f.readline())
     with open(cnt_path, 'w') as f:
         cnt += 1
         f.write(str(cnt))
