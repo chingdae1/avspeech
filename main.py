@@ -66,8 +66,14 @@ zipped = sorted(zipped)
 all_id, all_start, all_end, all_x, all_y = zip(*zipped)
 
 # Check already processed number of data
-with open('processed_cnt', 'r') as f:
-    processed_cnt = int(f.readlines())
+cnt_path = os.path.join(dummy_dir, 'processed_cnt.txt')
+if os.path.exists(cnt_path):
+    with open(cnt_path, 'r') as f:
+        processed_cnt = int(f.readlines())
+else:
+    with open(cnt_path, 'w') as f:
+        f.write('0')
+    processed_cnt = 0
 
 all_id = all_id[args.start + processed_cnt:args.end]
 all_start = all_start[args.start + processed_cnt:args.end]
@@ -147,13 +153,13 @@ for i in range(len(all_id)):
             os.remove(f)
 
     # Add count
-    with open('processed_cnt', 'r') as f:
+    with open(cnt_path, 'r') as f:
         cnt = int(f.readlines())
-    with open('processed_cnt', 'w') as f:
+    with open(cnt_path, 'w') as f:
         cnt += 1
         f.write(str(cnt))
 
-with open('processed_cnt', 'w') as f:
+with open(cnt_path, 'w') as f:
     f.write('0')
 
 print('Done')
