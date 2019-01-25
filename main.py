@@ -146,7 +146,7 @@ for i in range(len(all_id)):
         for f in all_relavant:
             os.remove(f)
 
-    # Create dummy which means this data has been completed
+    # Add count
     with open('processed_cnt', 'r') as f:
         cnt = int(f.readlines())
     with open('processed_cnt', 'w') as f:
