@@ -1,7 +1,7 @@
 #!/bin/bash
 nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_5 --fourcc mp4v --start 300000 --end 330000 > ./log/log_1 &
 nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_6 --fourcc mp4v --start 330000 --end 360000 > ./log/log_2 &
-nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_7 --fourcc mp4v --start 360000 --end 360000 > ./log/log_3 &
+nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_7 --fourcc mp4v --start 360000 --end 390000 > ./log/log_3 &
 nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_8 --fourcc mp4v --start 390000 --end 420000 > ./log/log_4 &
 nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_9 --fourcc mp4v --start 420000 --end 450000 > ./log/log_5 &
 nohup python3 main.py --csv_dir ./csv --result_dir /workspace2/AVStrain_10 --fourcc mp4v --start 450000 --end 480000 > ./log/log_6 &
