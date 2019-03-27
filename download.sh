@@ -1,11 +1,12 @@
 #!/bin/bash
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStest_1 --fourcc mp4v --start 0 --end 30000 > ./log/log_1 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStest_2 --fourcc mp4v --start 30000 --end 60000 > ./log/log_2 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStest_3 --fourcc mp4v --start 60000 --end 90000 > ./log/log_3 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStest_4 --fourcc mp4v --start 90000 --end 120000 > ./log/log_4 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStest_5 --fourcc mp4v --start 120000 --end 150000 > ./log/log_5 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStest_6 --fourcc mp4v --start 150000 --end 180000 > ./log/log_6 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_1 --fourcc mp4v --start 180000 --end 210000 > ./log/log_7 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_2 --fourcc mp4v --start 210000 --end 240000 > ./log/log_8 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_3 --fourcc mp4v --start 240000 --end 270000 > ./log/log_9 &
-nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_4 --fourcc mp4v --start 270000 --end 300000 > ./log/log_10 &
+## Download only train dataset. [!] Threre's only train csv in csv directory.
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStrain_1 --fourcc mp4v --start 0 --end 2000 > ./log/log_1 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStrain_2 --fourcc mp4v --start 2000 --end 4000 > ./log/log_2 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStrain_3 --fourcc mp4v --start 4000 --end 6000 > ./log/log_3 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStrain_4 --fourcc mp4v --start 6000 --end 8000 > ./log/log_4 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStrain_5 --fourcc mp4v --start 8000 --end 10000 > ./log/log_5 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd1/AVStrain_6 --fourcc mp4v --start 10000 --end 12000 > ./log/log_6 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_7 --fourcc mp4v --start 12000 --end 14000 > ./log/log_7 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_8 --fourcc mp4v --start 14000 --end 16000 > ./log/log_8 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_9 --fourcc mp4v --start 16000 --end 18000 > ./log/log_9 &
+nohup python3 main.py --csv_dir ./csv --result_dir /ssd2/AVStrain_10 --fourcc mp4v --start 18000 --end 20000 > ./log/log_10 &
