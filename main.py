@@ -134,6 +134,8 @@ for i in range(len(all_id)):
         # Crop target face
         is_cropped = crop_face(vc, x, y, vid_writer)
 
+        vc.release()
+        vid_writer.release()
         if is_cropped:
             done_cnt += 1
         else:
