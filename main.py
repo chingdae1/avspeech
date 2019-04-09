@@ -124,6 +124,7 @@ for i in range(len(all_id)):
             subprocess.call(resample_command, shell=True)
             os.remove(cut_video_path + '.mp4')
             os.rename(cut_video_path + '_resampled.mp4', cut_video_path + '.mp4')
+            vc.release()
             vc = cv2.VideoCapture(cut_video_path + '.mp4')
 
         fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
