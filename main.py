@@ -7,7 +7,7 @@ import subprocess
 from downloader import download
 from cutter import cut
 from cropper import crop_face
-import psutil
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--csv_dir', default='./data_csv')
