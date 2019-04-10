@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--AVS_dir', default='/workspace2')
 args = parser.parse_args()
 
-all_AVS = glob.glob(os.path.join(args.AVS_dir, 'train*'))
+all_AVS = glob.glob(os.path.join(args.AVS_dir, 'AVStrain*'))
 
 for i, avs in enumerate(all_AVS):
     all_npy = glob.glob(os.path.join(avs, 'numpy', 'audio', '*'))
