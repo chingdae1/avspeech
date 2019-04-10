@@ -127,11 +127,11 @@ for i in range(len(all_id)):
         if vc.get(cv2.CAP_PROP_FPS) != args.fps:
             print('Resample video..')
             fps_int = int(args.fps)
-            resample_command = 'ffmpeg -y -i ' + cut_video_path_ext+ \
+            resample_command = 'ffmpeg -y -i ' + cut_video_path_ext + \
                                ' -r ' + str(fps_int) + \
                                ' -c:v libx264 -b:v 3M -strict -2 -movflags faststart ' \
                                + cut_video_path + '_resampled.mp4'
-            subprocess.call(resample_command, shell=False)
+            subprocess.call(resample_command, shell=True)
 
             os.remove(cut_video_path_ext)
             os.rename(cut_video_path + '_resampled.mp4', cut_video_path_ext)
@@ -156,9 +156,10 @@ for i in range(len(all_id)):
             all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id_dur + '*'))
             for f in all_relavant:
                 os.remove(f)
-    except:
+    except Exception as e:
         print('[!][!][!][!][!][!][!][!][!][!][!][!][!][!][!]')
         print('FAIL. SOMTHING WRONG. ex) Fail to download.')
+        print(e)
         print('REMOVE ALL RELAVANT FILE to', id_dur)
         fail_cnt += 1
         all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id_dur + '*'))
