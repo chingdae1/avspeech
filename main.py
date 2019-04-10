@@ -7,12 +7,13 @@ import subprocess
 from downloader import download
 from cutter import cut
 from cropper import crop_face
+import psutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--csv_dir', default='./data_csv')
 parser.add_argument('--result_dir', default='./result')
 parser.add_argument('--start', default=0, type=int)
-parser.add_argument('--end', default=3, type=int)
+parser.add_argument('--end', default=6, type=int)
 parser.add_argument('--sr', default=16000)
 parser.add_argument('--fourcc', default='avc1')  # In ubuntu, use mp4v for mp4.
 parser.add_argument('--crop_ext', default='mp4')
@@ -85,18 +86,27 @@ prev_id = None
 for i in range(len(all_id)):
     id, start, end, x, y = all_id[i], all_start[i], all_end[i], all_x[i], all_y[i]
     print('================== Progress: [{}/{}],  ID:{} =================='.format(i+1, len(all_id), id))
-    cut_audio_path = os.path.join(cut_audio_dir, id + '_' + str(int(start)) + '_' + str(int(end)))
+    id_dur = id + '_' + str(int(start)) + '_' + str(int(end))
+    id_dur_crop_ext = id_dur + '.' + args.crop_ext
+    id_dur_npy = id_dur + '.npy'
+    cut_audio_path = os.path.join(cut_audio_dir, id_dur)
+    cut_audio_path_ext = cut_audio_path + '.wav'
     full_audio_path = os.path.join(full_audio_dir, id)
-    cut_video_path = os.path.join(cut_video_dir, id + '_' + str(int(start)) + '_' + str(int(end)))
+    full_audio_path_ext = full_audio_path + '.wav'
+    cut_video_path = os.path.join(cut_video_dir, id_dur)
+    cut_video_path_ext = cut_video_path + '.mp4'
     full_video_path = os.path.join(full_video_dir, id)
-    cropped_path = os.path.join(cropped_dir, id + '_' + str(int(start)) + '_' + str(int(end)) + '.' + args.crop_ext)
-    audio_np_path = os.path.join(audio_np_dir, id + '_' + str(int(start)) + '_' + str(int(end)) + '.npy')
+    full_video_path_ext = full_video_path + '.mp4'
+    cropped_path = os.path.join(cropped_dir, id_dur_crop_ext)
+    audio_np_path = os.path.join(audio_np_dir, id_dur_npy)
 
     try:
         if id != prev_id and prev_id is not None:
             print('Delete full video, id:', prev_id)
-            prev_audio_full = os.path.join(full_audio_dir, prev_id + '.wav')
-            prev_video_full = os.path.join(full_video_dir, prev_id + '.mp4')
+            prev_id_wav = prev_id + '.wav'
+            prev_id_mp4 = prev_id + '.mp4'
+            prev_audio_full = os.path.join(full_audio_dir, prev_id_wav)
+            prev_video_full = os.path.join(full_video_dir, prev_id_mp4)
             if os.path.exists(prev_audio_full):
                 os.remove(prev_audio_full)
             if os.path.exists(prev_video_full):
@@ -107,25 +117,26 @@ for i in range(len(all_id)):
 
         # Cut out target portion of video and audio
         # Also, save audio as numpy
-        cut(full_video_path + '.mp4', cut_video_path + '.mp4',
-            full_audio_path + '.wav', cut_audio_path + '.wav',
+        cut(full_video_path_ext, cut_video_path_ext,
+            full_audio_path_ext, cut_audio_path_ext,
             start, end, args.sr, audio_np_path)
 
-        vc = cv2.VideoCapture(cut_video_path + '.mp4')
+        vc = cv2.VideoCapture(cut_video_path_ext)
 
         # If FPS is not 25, resample video.
         if vc.get(cv2.CAP_PROP_FPS) != args.fps:
             print('Resample video..')
             fps_int = int(args.fps)
-            resample_command = 'ffmpeg -y -i ' + cut_video_path + '.mp4' + \
+            resample_command = 'ffmpeg -y -i ' + cut_video_path_ext+ \
                                ' -r ' + str(fps_int) + \
                                ' -c:v libx264 -b:v 3M -strict -2 -movflags faststart ' \
                                + cut_video_path + '_resampled.mp4'
-            subprocess.call(resample_command, shell=True)
-            os.remove(cut_video_path + '.mp4')
-            os.rename(cut_video_path + '_resampled.mp4', cut_video_path + '.mp4')
+            subprocess.call(resample_command, shell=False)
+
+            os.remove(cut_video_path_ext)
+            os.rename(cut_video_path + '_resampled.mp4', cut_video_path_ext)
             vc.release()
-            vc = cv2.VideoCapture(cut_video_path + '.mp4')
+            vc = cv2.VideoCapture(cut_video_path_ext)
 
         fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
         vid_writer = cv2.VideoWriter(cropped_path,
@@ -134,24 +145,23 @@ for i in range(len(all_id)):
                                      (args.crop_size, args.crop_size))
         # Crop target face
         is_cropped = crop_face(vc, x, y, vid_writer)
-
         vc.release()
         vid_writer.release()
         if is_cropped:
             done_cnt += 1
         else:
             print('Skipped:', cropped_path)
-            print('REMOVE ALL RELAVANT FILE to', id + '_' + str(int(start)) + '_' + str(int(end)))
+            print('REMOVE ALL RELAVANT FILE to', id_dur)
             skipped_cnt += 1
-            all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '_' + str(int(start)) + '_' + str(int(end)) + '*'))
+            all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id_dur + '*'))
             for f in all_relavant:
                 os.remove(f)
     except:
         print('[!][!][!][!][!][!][!][!][!][!][!][!][!][!][!]')
         print('FAIL. SOMTHING WRONG. ex) Fail to download.')
-        print('REMOVE ALL RELAVANT FILE to', id + '_' + str(int(start)) + '_' + str(int(end)))
+        print('REMOVE ALL RELAVANT FILE to', id_dur)
         fail_cnt += 1
-        all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id + '_' + str(int(start)) + '_' + str(int(end)) + '*'))
+        all_relavant = glob.glob(os.path.join(args.result_dir, '*', '*', id_dur + '*'))
         for f in all_relavant:
             os.remove(f)
 

@@ -5,9 +5,10 @@ import librosa
 
 def cut(full_video_path, cut_video_path, full_audio_path, cut_audio_path, start_t, end_t, sr, np_path):
     # Cut video
-    myclip = mpy.VideoFileClip(full_video_path)
-    subclip = myclip.subclip(start_t, end_t)
-    subclip.write_videofile(cut_video_path)
+    with mpy.VideoFileClip(full_video_path) as myclip:
+        # myclip = mpy.VideoFileClip(full_video_path)
+        subclip = myclip.subclip(start_t, end_t)
+        subclip.write_videofile(cut_video_path)
 
     # Cut audio
     duration = end_t - start_t
